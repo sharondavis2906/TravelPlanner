@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, FlatList, TouchableOpacity, Text } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Adjust if using a different icon library
 import Searcher from './searcher'
 const MapComponent = () => {
   const [markers, setMarkers] = useState([]);
@@ -15,17 +14,13 @@ const MapComponent = () => {
       const response = await axios.get(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&accept-language=he`
       );
-      console.log()
       setSearchResults(response.data);
-      console.log(searchResults)
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleResultPress = (item, setSearchQuery) => {
-    console.log(item)
-    console.log(setSearchQuery)
     const newMarker = {
       latitude: parseFloat(item.lat),
       longitude: parseFloat(item.lon),
@@ -63,7 +58,7 @@ const MapComponent = () => {
 
   return (
     <View style={styles.container} >
-        < Searcher handleSearch={handleSearch} searchResults={searchResults} clearSearch={clearSearch} renderSearchResult={renderSearchResult} />
+        < Searcher handleSearch={handleSearch} searchResults={searchResults} clearSearch={clearSearch} renderSearchResult={renderSearchResult} keyExtractor={(item) => item.place_id}/>
       <MapView marginTop={5} height='90%' region={region} showsUserLocation={true} moveOnMarkerPress={true} userLocationAnnotationTitle={true}>
         {markers.map((marker, index) => (
           <Marker key={index} coordinate={marker} title={marker.title} />

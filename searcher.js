@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Adjust if using a different icon library
 
-const Searcher = ({handleSearch, searchResults, clearSearch, renderSearchResult}) => {
+const Searcher = ({handleSearch, searchResults, clearSearch, renderSearchResult,keyExtractor }) => {
     const [searchQuery, setSearchQuery] = useState('');
-  
-
+    
+    const handleFullSearch = (searchQuery) => {
+        console.log(searchQuery)
+        setSearchQuery(searchQuery)
+        handleSearch(searchQuery)
+      };
+    
+    
     return (
     <View  width='100%' marginTop={5} marginButtom={5}  >
       <View style={styles.searchContainer} >
@@ -16,16 +22,13 @@ const Searcher = ({handleSearch, searchResults, clearSearch, renderSearchResult}
           style={styles.input}
           placeholder="Search"
           value={searchQuery}
-          onChangeText={setSearchQuery}
+          onChangeText={handleFullSearch}
         />
-        <TouchableOpacity onPress={() => handleSearch(searchQuery)} style={styles.iconButton}>
-          <Icon name="search" size={20} color="#000" />
-        </TouchableOpacity>
 
       </View>
       <FlatList top={0} buttom={0} left={0} right={0} position='abosulte'
         data={searchResults}
-        keyExtractor={(item) => item.place_id}
+        keyExtractor={keyExtractor}
         renderItem={({item}) => renderSearchResult({item, setSearchQuery})}
       />
     </View>

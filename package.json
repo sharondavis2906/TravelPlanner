@@ -12,6 +12,7 @@
     "axios": "^1.7.7",
     "expo": "~51.0.28",
     "expo-location": "^17.0.1",
+    "expo-sqlite": "~14.0.6",
     "expo-status-bar": "~1.12.1",
     "geolib": "^3.3.4",
     "react": "18.2.0",

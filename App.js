@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import MapComponent from './map';
-
-const ModalExample = () => {
-  const [visibleModal, setVisibleModal] = useState('map');
+import TripManager from './tripsManager'
+const App = () => {
+  const [visibleModal, setVisibleModal] = useState('trips');
 
   // Function to handle button press
   const openModal = (modalId) => {
@@ -40,6 +40,7 @@ const ModalExample = () => {
         </TouchableOpacity>
       </View>
               {visibleModal === 'map' && <MapComponent />}
+              {visibleModal === 'trips' && <TripManager />}
     </View>
   );
 };
@@ -74,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalExample;
+export default App;
