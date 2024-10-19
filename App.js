@@ -8,7 +8,7 @@ import {
 import MapComponent from './map';
 import TripManager from './tripsManager'
 const App = () => {
-  const [visibleModal, setVisibleModal] = useState('trips');
+  const [visibleModal, setVisibleModal] = useState('map');
 
   // Function to handle button press
   const openModal = (modalId) => {
@@ -48,7 +48,6 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   buttonRow: {
     marginTop: 50,

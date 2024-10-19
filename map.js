@@ -12,7 +12,7 @@ const MapComponent = () => {
   const handleSearch = async (searchQuery) => {
     try {
       const response = await axios.get(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&accept-language=he`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&accept-language=he&addressdetails=1`
       );
       setSearchResults(response.data);
     } catch (error) {
@@ -20,11 +20,11 @@ const MapComponent = () => {
     }
   };
 
-  const handleResultPress = (item, setSearchQuery) => {
+  const handleResultPress = (item, setSearchQuery, locationName) => {
     const newMarker = {
       latitude: parseFloat(item.lat),
       longitude: parseFloat(item.lon),
-      title: item.display_name,
+      title: locationName,
     };
 
     // Update the markers and center the map on the selected result
@@ -47,10 +47,12 @@ const MapComponent = () => {
 
   
   const renderSearchResult = ({item, setSearchQuery}) => {
+    console.log(item)
+    const locationName = [item.address.country, item.address.city, item.address.suburb, item.address.road].filter(part => part).join(', ');
     return (
-<TouchableOpacity onPress={() => handleResultPress(item, setSearchQuery)} borderWidth={1} >
+<TouchableOpacity onPress={() => handleResultPress(item, setSearchQuery, locationName)} borderWidth={1} >
             <View >
-              <Text>{item.display_name}</Text>
+              <Text>{locationName} </Text>
             </View>
           </TouchableOpacity>
     )

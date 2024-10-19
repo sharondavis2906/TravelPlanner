@@ -3,15 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, TextInput, FlatList,TouchableOpacity } from 'react-native';
 import { execQuery, selectQuery } from './sqlite'; // Adjust the path as necessary
 import Searcher from './searcher'
-
+import Trip from './trip';
 const TripManager = () => {
   const [tripName, setTripName] = useState('');
   const [trips, setTrips] = useState([]);
+  const [selectedTripName, setSelectedTripName] = useState('');
+  const [selectedTripID, setSelectedTripID] = useState('');
+  const [showTrip, setShowTrip] = useState(false);
+
 
   useEffect(() => {
     const initializeDatabase = async () => {
       await execQuery('CREATE TABLE IF NOT EXISTS trips (trip_id INTEGER PRIMARY KEY AUTOINCREMENT, trip_name TEXT UNIQUE NOT NULL);')
-      await execQuery('CREATE TABLE IF NOT EXISTS trips_by_date (trip_id INTEGER,start_date TEXT NOT NULL,end_date TEXT NOT NULL,FOREIGN KEY (trip_id) REFERENCES trips(trip_id));')
+      await execQuery('CREATE TABLE IF NOT EXISTS trips_by_date (trip_id INTEGER unique,start_date TEXT NOT NULL,end_date TEXT NOT NULL,FOREIGN KEY (trip_id) REFERENCES trips(trip_id));')
       await execQuery('CREATE TABLE IF NOT EXISTS recommends (recommend_id INTEGER PRIMARY KEY AUTOINCREMENT,recommend_name TEXT NOT NULL,lat REAL NOT NULL,long REAL NOT NULL,description TEXT,review TEXT,stars_rate INTEGER CHECK (stars_rate >= 0 AND stars_rate <= 5));')
       await execQuery('CREATE TABLE IF NOT EXISTS recommend_in_trip (trip_id INTEGER,recommend_id INTEGER,FOREIGN KEY (trip_id) REFERENCES trips(trip_id),FOREIGN KEY (recommend_id) REFERENCES recommends(recommend_id));')
       await execQuery('CREATE TABLE IF NOT EXISTS labels_types (label_type_id INTEGER PRIMARY KEY AUTOINCREMENT,label_type_name TEXT UNIQUE NOT NULL);')
@@ -48,7 +52,9 @@ const TripManager = () => {
   };
 
   const handleResultPress = (item, setSearchQuery) => {
-
+    setSelectedTripID(item.trip_id)
+    setSelectedTripName(item.trip_name)
+    setShowTrip(true)
     };
 
     const clearSearch = (setSearchQuery) => {
@@ -58,15 +64,17 @@ const TripManager = () => {
 
       const renderSearchResult = ({item, setSearchQuery}) => {
         return (
-    <TouchableOpacity onPress={() => handleResultPress(item, setSearchQuery)} borderWidth={1} >
-                <View >
-                  <Text>{item.trip_name}</Text>
+    <TouchableOpacity onPress={() => handleResultPress(item, setSearchQuery)}   >
+                <View alignItems='center' width='100%' height={50} backgroundColor='white' borderWidth={1} borderColor='gray'>
+                  <Text textAlign='right' position='absolute' top={5} right={5}>{item.trip_name}</Text>
                 </View>
               </TouchableOpacity>
         )
       };
   return (
     <View>
+        {!showTrip &&
+        <View>
                 < Searcher handleSearch={handleSearch} searchResults={trips} clearSearch={clearSearch} renderSearchResult={renderSearchResult} keyExtractor={(item) => item.trip_id} />
       <TextInput
         value={tripName}
@@ -74,6 +82,9 @@ const TripManager = () => {
         placeholder="Enter trip name"
       />
       <Button title="Add Trip" onPress={handleAddTrip} />
+      </View>
+        }
+      { showTrip && <Trip tripName={selectedTripName} tripId={selectedTripID} setShowTrip={setShowTrip} />}
     </View>
   );
 };
